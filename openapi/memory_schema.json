@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neuralnexus.ai/schemas/memory-entry.json",
+  "title": "NNMP Memory Entry",
+  "description": "A standardized memory object for the Neural Nexus Memory Protocol",
+  "type": "object",
+  "required": ["id", "text", "category", "vector", "metadata"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique v4 UUID for the memory"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The raw textual content of the memory"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["preference", "fact", "decision", "entity", "other"],
+      "description": "The classification of the memory"
+    },
+    "vector": {
+      "type": "array",
+      "items": { "type": "number" },
+      "description": "High-dimensional vector embedding of the text"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["created_at", "last_accessed", "strength"],
+      "properties": {
+        "created_at": { "type": "integer", "description": "Unix timestamp (ms) of creation" },
+        "last_accessed": { "type": "integer", "description": "Unix timestamp (ms) of last retrieval" },
+        "strength": { "type": "number", "minimum": 0, "description": "The reinforced importance of this memory" },
+        "userid": { "type": "string", "description": "Owner of the memory (optional for single-user)" },
+        "source": { "type": "string", "description": "Origin of the memory (e.g., 'telegram', 'cli')" },
+        "decayed_score": { "type": "number", "description": "The score after applying time decay (read-only)" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

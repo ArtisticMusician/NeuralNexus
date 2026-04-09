@@ -1,0 +1,29 @@
+{
+  "name": "@neural-nexus/sdk",
+  "version": "1.0.0",
+  "description": "JavaScript client SDK for Neural Nexus.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "ai",
+    "memory",
+    "llm",
+    "neural-nexus",
+    "vector-database"
+  ],
+  "author": "Josh",
+  "license": "Non-Commercial",
+  "dependencies": {
+    "axios": "^1.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

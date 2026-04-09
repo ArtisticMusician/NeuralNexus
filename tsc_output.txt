@@ -1,0 +1,8 @@
+src/core/NeuralNexusCore.ts(292,68): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/schemas/ajv.ts(8,24): error TS2351: This expression is not constructable.
+  Type 'typeof import("C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/ajv/dist/ajv")' has no construct signatures.
+src/schemas/ajv.ts(16,1): error TS2349: This expression is not callable.
+  Type 'typeof import("C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/ajv-formats/dist/index")' has no call signatures.
+src/telegram-bot.ts(88,59): error TS2322: Type 'string' is not assignable to type 'MemoryCategory | undefined'.
+src/telegram-bot.ts(109,42): error TS2322: Type 'string' is not assignable to type 'MemoryCategory | undefined'.
+tests/MemoryConsolidator.test.ts(7,30): error TS2503: Cannot find namespace 'vi'.

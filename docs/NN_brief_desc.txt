@@ -1,0 +1,13 @@
+Neural Nexus is a centralized "Memory" for your AI agents. It provides a standardized, high-performance interface for storing, retrieving, and maintaining facts, preferences, and decisions over time, and across platforms. 
+
+By decoupling memory from specific LLMs or frameworks (like LangChain or OpenClaw), Neural Nexus ensures your agents share a consistent, long-term context across every platform—API, CLI, Browser, and Mobile.
+
+**Core Features**
+
+--Hybrid RRF Retrieval--Nexus uses Reciprocal Rank Fusion (RRF) to merge semantic vector similarity with traditional keyword precision. This ensures that whether you're searching for a vague concept or a specific serial number, you get the right result every time.
+
+--Temporal Decay Engine--Memories aren't static. Our decay engine calculates relevance based on recency and strength. Unreinforced memories naturally fade, while frequently accessed information stays at the forefront of your agent's context.
+
+--Semantic Deduplication (Zero-Bloat)--Stop "fact bloat" before it starts. When storing new information, Nexus checks for existing matches. If a new memory is >= 0.95 similar to an existing one, the records are merged and reinforced rather than duplicated.
+
+--Privacy-First & Local-First--Uses @xenova/transformers for local embedding generation. Your sensitive data doesn't need to leave your infrastructure for vectorization.

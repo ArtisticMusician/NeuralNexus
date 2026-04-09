@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'neural-nexus'
+    static_configs:
+      - targets: ['neural-nexus:9464']

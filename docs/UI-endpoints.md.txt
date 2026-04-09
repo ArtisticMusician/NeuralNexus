@@ -1,0 +1,169 @@
+# Neural Nexus — UI Data Points Reference
+
+All data points available for dashboard visualization, organized by source.
+
+---
+
+## System / Health
+
+| Data Point | Source | Currently in UI |
+|---|---|---|
+| Server status (`ok` / `unreachable`) | `GET /health` | ✓ |
+| Vector store name | `GET /health` | ✓ |
+| Server uptime (seconds) | `GET /health` | ✓ |
+| Qdrant collection status | `GET /health` → `qdrantStatus` | ✓ (hidden) |
+| Total memories in DB | `GET /health` → `pointsCount` | ✓ |
+| Indexed vectors count | `GET /health` → `indexedVectorsCount` | ✗ |
+| Qdrant segment count | `GET /health` → `segmentsCount` | ✗ |
+| Embedding model load time | `GET /health` → `embeddingLoadTimeMs` | ✗ |
+
+---
+
+## Session Stats (resets on server restart)
+
+| Data Point | Source | Currently in UI |
+|---|---|---|
+| Recalls this session | `GET /health` → `recallsTotal` | ✓ |
+| Stores this session | `GET /health` → `storesTotal` | ✓ |
+| Average recall time (ms) | `GET /health` → `avgRecallMs` | ✓ |
+| Fastest recall (ms) | `GET /health` → `fastestRecallMs` | ✗ |
+| Slowest recall (ms) | `GET /health` → `slowestRecallMs` | ✗ |
+| Recalls vs. stores ratio | derived from `recallsTotal` / `storesTotal` | ✗ |
+
+---
+
+## Per API Key (lifetime, persisted in SQLite)
+
+| Data Point | Source | Currently in UI |
+|---|---|---|
+| Key name | `GET /admin/api-keys` | ✓ |
+| Key prefix | `GET /admin/api-keys` | ✓ |
+| Created date | `GET /admin/api-keys` | ✓ |
+| Last used date | `GET /admin/api-keys` | ✓ |
+| Total recalls | `GET /admin/api-keys` → `recalls_total` | ✓ |
+| Total stores | `GET /admin/api-keys` → `stores_total` | ✓ |
+| Revoked status | `GET /admin/api-keys` → `revoked` | ✓ |
+
+---
+
+## Per Memory (on every recall result)
+
+| Data Point | Source | Currently in UI |
+|---|---|---|
+| Memory text | `POST /recall` → payload | ✓ |
+| Category | `POST /recall` → payload | ✓ |
+| Decayed score | `POST /recall` → `metadata.decayed_score` | ✓ |
+| Raw search score | `POST /recall` → `metadata.search_score` | ✗ |
+| Score type (`rrf` / `cosine`) | `POST /recall` → `metadata.score_type` | ✗ |
+| Created date | `POST /recall` → `metadata.created_at` | ✓ |
+| Last accessed date | `POST /recall` → `metadata.last_accessed_at` | ✗ |
+| Last updated date | `POST /recall` → `metadata.updated_at` | ✗ |
+| Strength value | `POST /recall` → `metadata.strength` | ✗ |
+| User ID (owner) | `POST /recall` → `metadata.userid` | ✗ |
+| Memory ID | `POST /recall` → `id` | ✗ (needed for delete/edit) |
+
+---
+
+## Recall Response Metadata
+
+| Data Point | Source | Currently in UI |
+|---|---|---|
+| Search type (`hybrid` / `vector`) | `POST /recall` → `metadata.search_type` | ✗ |
+| Results before threshold filtering | `POST /recall` → `metadata.countBeforeFiltering` | ✗ |
+| Threshold applied | `POST /recall` → `metadata.threshold_applied` | ✗ |
+
+---
+
+| Data Point | Metric Name | Labels |
+|---|---|---|
+| Total memories stored | `nexus_memory_stored_total` | `user_id`, `adapter_id` |
+| Total recalls | `nexus_recall_total` | `user_id`, `adapter_id` |
+| Recall duration histogram (p50, p95, p99) | `nexus_recall_duration_seconds` | `user_id`, `adapter_id` |
+
+---
+
+## Category Breakdown
+
+| Data Point                    | Source                                                   | Currently in UI |
+| ----------------------------- | -------------------------------------------------------- | --------------- |
+| Memory count per category     | `GET /admin/stats/categories` → `categories` map         | ✗               |
+
+Example response:
+
+```json
+{ "categories": { "fact": 142, "preference": 38, "entity": 61, "decision": 19, "other": 7 } }
+```
+
+---
+
+## Merge / Deduplication Stats
+
+| Data Point                          | Source                                       | Currently in UI |
+| ----------------------------------- | -------------------------------------------- | --------------- |
+| Total memories merged (lifetime)    | `GET /admin/stats/merges` → `mergeCount`     | ✗               |
+| Recent merge log (last 20)          | `GET /admin/stats/merges` → `recent`         | ✗               |
+
+---
+
+## Recall Score Distribution
+
+Already recorded by the internal stats service — no new server code required.
+
+| Data Point                          | Source                                                              | Currently in UI |
+| ----------------------------------- | ------------------------------------------------------------------- | --------------- |
+| p50 / p95 / p99 recall latency      | `:9464/metrics` → `nexus_recall_duration_seconds` histogram         | ✗               |
+
+---
+
+## Suggested Chart Types
+
+Five visualization patterns suited to the available data. Not yet implemented — for UI designer review.
+
+### 1. Live Counter + Line
+A large numeric value with a small trailing line showing recent trend.
+- **Best for:** Recalls this session, Stores this session, Total memories
+- **Updates:** Poll `/health` every 30s
+- **Note:** Most impactful tile on the system dashboard — shows at a glance whether the system is being used
+
+### 2. Sparkline
+A minimal inline line chart with no axes, embedded inside a stat row or table cell.
+- **Best for:** Per API key recalls over time, avg recall latency trend across sessions
+- **Updates:** Would require the server to store a rolling history (not tracked yet)
+- **Note:** Works well inside the API Keys table next to the recall/store counts
+
+### 3. Gauge
+A arc/dial showing a value between 0 and 1 (or 0 and 100%).
+- **Best for:** Similarity threshold, Recall threshold, Hybrid alpha (all live-editable config values)
+- **Updates:** Static until config changes
+- **Note:** Pairs well with a settings panel so the user can see the effect of tuning the value
+
+### 4. Horizontal Bar
+A ranked list of bars showing relative values across named items.
+- **Best for:** Per-category memory breakdown (how many facts vs. preferences vs. entities vs. decisions), Per API key recall counts compared across keys
+- **Updates:** Would require a new `/admin/stats/categories` endpoint (not tracked yet)
+- **Note:** Most useful chart for understanding what kind of information is stored in the system
+
+### 5. Donut
+A circular chart showing proportional breakdown of a whole.
+- **Best for:** Memory category distribution (same data as horizontal bar, different emphasis), Recalls by API key as a share of total
+- **Updates:** Same source as horizontal bar
+- **Note:** Better than horizontal bar when there are 5 or fewer categories and the story is "what fraction" rather than "how many"
+
+---
+
+## Endpoints Quick Reference
+
+| Endpoint | Method | Auth | Returns |
+|---|---|---|---|
+| `/health` | GET | Public | Server status, uptime, memory count, session stats |
+| `/recall` | POST | Required | Memories with full metadata |
+| `/store` | POST | Required | Confirmation |
+| `/categories` | GET | Required | List of memory categories |
+| `/admin/api-keys` | GET | Required | All API keys and usage stats |
+| `/admin/api-keys` | POST | Required | New key (includes raw value — shown once) |
+| `/admin/api-keys/:id` | DELETE | Required | Confirmation |
+| `/admin/users` | GET | Required | All users |
+| `/admin/users` | POST | Required | New user |
+| `/admin/users/:id` | DELETE | Required | Confirmation |
+| `/admin/export` | GET | Required | All memories as JSONL |
+| `/audit` | GET | Required | Replacement / merge audit log |

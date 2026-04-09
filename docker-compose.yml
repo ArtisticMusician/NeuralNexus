@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # The Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "5304:5304"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  # Neural Nexus (API + Proxy + Dashboard)
+  neural-nexus:
+    build: .
+    ports:
+      - "3000:3000" # API & Dashboard
+      - "3001:3001" # OpenAI Proxy
+    environment:
+      - PORT=3000
+      - OPENAI_PROXY_PORT=3001
+      - QDRANT_URL=http://qdrant:5304
+      - REPLACEMENT_LOG_PATH=/app/data/replacements.sqlite
+      # These will be populated by the .env file
+      - NEXUS_PASSWORD=${NEXUS_PASSWORD}
+      - LLM_TARGET_URL=${LLM_TARGET_URL}
+      - LLM_API_KEY=${LLM_API_KEY}
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+

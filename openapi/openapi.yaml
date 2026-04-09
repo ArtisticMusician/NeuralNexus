@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  title: Neural Nexus Memory Protocol (NNMP)
+  version: 1.0.0
+  description: Official OpenAPI specification for the Neural Nexus AI Memory.
+
+servers:
+  - url: http://localhost:3000
+    description: Default Local Server
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    MemoryEntry:
+      $ref: './memory_schema.json'
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /recall:
+    post:
+      summary: Query long-term memory
+      description: Performs a hybrid search (vector + keyword) and returns decaying-scored memories.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string }
+                userid: { type: string }
+                limit: { type: integer, default: 5 }
+                maxTokens: { type: integer }
+      responses:
+        '200':
+          description: List of relevant memories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemoryEntry'
+
+  /store:
+    post:
+      summary: Save a new memory
+      description: Stores a memory or updates an existing one if similarity is >= 0.95.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string }
+                category: { type: string, enum: [preference, fact, entity, decision, other] }
+                userid: { type: string }
+                metadata: { type: object }
+      responses:
+        '201':
+          description: Memory successfully stored
+
+  /reinforce:
+    post:
+      summary: Strengthen a specific memory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [memoryId]
+              properties:
+                memoryId: { type: string }
+                strengthAdjustment: { type: number, default: 0.05 }
+      responses:
+        '200':
+          description: Memory reinforced
+
+  /audit:
+    get:
+      summary: Get replacement audit logs
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        '200':
+          description: List of audit records
+
+  /admin/export:
+    get:
+      summary: Export memories (Admin)
+      parameters:
+        - name: userid
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: NDJSON file of all memories
+
+  /admin/import:
+    post:
+      summary: Import memories (Admin)
+      requestBody:
+        content:
+          text/plain:
+            schema: { type: string }
+      responses:
+        '200':
+          description: Import result summary
+
+  /health:
+    get:
+      summary: Check system status
+      security: []
+      responses:
+        '200':
+          description: Returns status 'ok'

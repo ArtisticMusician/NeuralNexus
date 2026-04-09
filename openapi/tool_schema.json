@@ -1,0 +1,48 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "recall_memory",
+        "description": "Search long-term memory for relevant past information, preferences, or facts.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query to find relevant memories."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of memories to retrieve.",
+              "default": 5
+            }
+          },
+          "required": ["query"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "store_memory",
+        "description": "Save important information, facts, or user preferences to long-term memory.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "The content of the memory to store."
+            },
+            "category": {
+              "type": "string",
+              "enum": ["preference", "fact", "entity", "decision", "other"],
+              "description": "The category of the memory for better organization."
+            }
+          },
+          "required": ["text"]
+        }
+      }
+    }
+  ]
+}

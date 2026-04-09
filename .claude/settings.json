@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:8008/store -H \"Content-Type: application/json\" -H \"X-Api-Key: your_secret_key_here\" -d '{\"\"text\"\":\"\"I prefer dark mode\"\",\"\"category\"\":\"\"preference\"\"}')",
+      "Bash(curl -s http://localhost:8008/categories -H \"X-Api-Key: your_secret_key_here\")",
+      "Bash(curl -s http://localhost:8008/categories)",
+      "Bash(curl -s -X OPTIONS http://localhost:8008/store -H \"Origin: http://localhost:6969\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: content-type,x-api-key\" -v)",
+      "Bash(node -e \":*)",
+      "Bash(curl -s http://localhost:8008/health)",
+      "Bash(curl -s -o - -w \"\\\\nHTTP_STATUS:%{http_code}\" http://localhost:6333/healthz)",
+      "Bash(mkdir -p \"c:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/dashboard/src/styles\")",
+      "Bash(mkdir -p \"c:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/dashboard/src/scripts\")",
+      "Bash(cp base.css styles/base.css)",
+      "Bash(cp memories.module.css styles/memories.css)",
+      "Bash(cp system.module.css styles/system.css)",
+      "Bash(cp api-keys.module.css styles/api-keys.css)",
+      "Bash(cp users.module.css styles/users.css)",
+      "Bash(npm install:*)",
+      "Bash(unzip -o qdrant.zip)"
+    ]
+  }
+}

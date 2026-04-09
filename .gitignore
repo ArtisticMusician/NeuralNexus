@@ -1,0 +1,19 @@
+node_modules/
+dist/
+qdrant/
+*.log
+.env
+.DS_Store
+
+# Local data and state
+data/
+storage/
+.qdrant-initialized
+qdrant-server/
+qdrant_data/
+
+# Binaries and archives
+bin_qdrant/
+*.tar.gz
+
+tools/

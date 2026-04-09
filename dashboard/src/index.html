@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Nexus Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles/dashboard.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ──────────────── SIDEBAR ──────────────── -->
+  <aside id="sidebar">
+    <div id="logo-wrap">
+      <img src="/NeuralNexus_logo_xsm.svg" alt="Neural Nexus">
+    </div>
+
+    <div id="sidebarServiceStatus">
+      <span class="svcStatusLabel">STATUS:</span>
+      <div class="svcStatusLights">
+        <div class="svcLight" id="slight-server">
+          <span class="svcLightDot" id="slight-server-dot"></span>
+          <span class="svcLightName">SERVER</span>
+        </div>
+        <div class="svcLight" id="slight-qdrant">
+          <span class="svcLightDot" id="slight-qdrant-dot"></span>
+          <span class="svcLightName">VDB</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarActions">
+      <button type="button" class="btn btn-primary btn-full" id="sidebarRebootBtn" onclick="restartSidebarService()">REBOOT</button>
+    </div>
+
+    <nav id="nav">
+      <a class="navItem active" data-page="overview" href="#" onclick="navigate('overview');return false;">
+        <span class="icoMask sz26" style="mask-image:url('/icons/System.svg');-webkit-mask-image:url('/icons/System.svg')"></span>
+        System
+      </a>
+      <a class="navItem" data-page="memories" href="#" onclick="navigate('memories');return false;">
+        <span class="icoMask sz26" style="mask-image:url('/icons/Memories.svg');-webkit-mask-image:url('/icons/Memories.svg')"></span>
+        Memories
+      </a>
+      <a class="navItem" data-page="apikeys" href="#" onclick="navigate('apikeys');return false;">
+        <span class="icoMask sz26" style="mask-image:url('/icons/ApiKey.svg');-webkit-mask-image:url('/icons/ApiKey.svg')"></span>
+        API Keys
+      </a>
+      <a class="navItem" data-page="config" href="#" onclick="navigate('config');return false;">
+        <span class="icoMask sz26" style="mask-image:url('/icons/Settings.svg');-webkit-mask-image:url('/icons/Settings.svg')"></span>
+        Config
+      </a>
+      <a class="navItem" data-page="docs" href="#" onclick="navigate('docs');return false;">
+        <span class="icoMask sz26" style="mask-image:url('/icons/Docs.svg');-webkit-mask-image:url('/icons/Docs.svg')"></span>
+        Docs
+      </a>
+    </nav>
+
+    <div id="sidebar-footer">
+      <div class="sidebarVersion">v1.0.0 — Neural Nexus</div>
+      <div class="sidebarStatus"><span class="sidebarStatusDot"></span>Connected</div>
+    </div>
+  </aside>
+
+  <!-- ──────────────── CONTENT (header + pages) ──────────────── -->
+  <div id="content">
+  <header id="globalHeader">
+    <div id="pageTitleWrap"><img id="pageTitleIcon" src="/icons/System.svg" width="26" height="26" alt=""><span id="globalPageTitle">SYSTEM</span></div>
+    <div id="globalSearch">
+      <input type="text" placeholder="Search memories…" id="overviewSearch">
+    </div>
+    <div class="addBtnGroup">
+      <button type="button" class="addBtn" data-tip="Add Memory" onclick="openAddMemoryModal()">
+        <img src="/icons/AddMemory.svg" width="24" height="24" alt="Add Memory">
+      </button>
+      <button type="button" class="addBtn" data-tip="Add API Key" onclick="openAddKeyModal()">
+        <img src="/icons/AddApiKey.svg" width="24" height="24" alt="Add API Key">
+      </button>
+      <button type="button" class="addBtn" data-tip="Add User" onclick="openAddUserModal()">
+        <img src="/icons/AddUser.svg" width="24" height="24" alt="Add User">
+      </button>
+    </div>
+  </header>
+
+  <!-- ──────────────── MAIN ──────────────── -->
+  <main id="main">
+
+    <!-- ══════════════ SYSTEM / OVERVIEW ══════════════ -->
+    <section class="page active" id="page-overview">
+
+      <!-- Row 1: Stat tiles + Core Services -->
+      <div class="grid" style="margin-bottom:12px;">
+        <div class="col-8">
+          <div class="grid statTileRow">
+            <div class="statTile col-3">
+              <div class="statTileContent">
+                <div class="statTileIcon statTileIcon-status">
+                  <img id="stat-status-icon" src="/icons/Status_OK.svg" width="28" height="28" alt="">
+                </div>
+                <div>
+                <div class="statLabel">Status</div>
+                <div class="statValue green" id="stat-status">ONLINE</div>
+                </div>
+              </div>
+            </div>
+            <div class="statTile col-3">
+              <div class="statTileContent">
+                <span class="icoMask statTileIcon" style="mask-image:url('/icons/RecallAvg.svg');-webkit-mask-image:url('/icons/RecallAvg.svg')"></span>
+                <div>
+                <div class="statLabel">Avg Recall (ms)</div>
+                <div class="statValue" id="stat-recall">—</div>
+                </div>
+              </div>
+            </div>
+            <div class="statTile col-3">
+              <div class="statTileContent">
+                <span class="icoMask statTileIcon" style="mask-image:url('/icons/Memories.svg');-webkit-mask-image:url('/icons/Memories.svg')"></span>
+                <div>
+                <div class="statLabel">Total Memories</div>
+                <div class="statValue" id="stat-memories">—</div>
+                </div>
+              </div>
+            </div>
+            <div class="statTile col-3">
+              <div class="statTileContent">
+                <span class="icoMask statTileIcon" style="mask-image:url('/icons/ApiKey.svg');-webkit-mask-image:url('/icons/ApiKey.svg')"></span>
+                <div>
+                <div class="statLabel">API Keys</div>
+                <div class="statValue" id="stat-keys">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel col-4">
+          <div class="panelHeader">Core Services</div>
+          <div class="serviceCard" id="svc-server-card">
+            <div class="svcLeft">
+              <span class="icoMask sz16" style="mask-image:url('/icons/Server.svg');-webkit-mask-image:url('/icons/Server.svg')"></span>
+              <div><div class="svcName">Server</div><div class="svcVersion" id="svc-server-version">v1.0.0</div></div>
+            </div>
+            <div class="svcRight">
+              <span id="svc-server-pill" class="statusPill ok"><img src="/icons/Status_OK.svg" alt=""></span>
+              <span class="svcUptime" id="svc-server-uptime">—</span>
+            </div>
+            <div class="svcError" id="svc-server-error"></div>
+          </div>
+          <div class="serviceCard" id="svc-qdrant-card">
+            <div class="svcLeft">
+              <span class="icoMask sz16" style="mask-image:url('/icons/VectorDB.svg');-webkit-mask-image:url('/icons/VectorDB.svg')"></span>
+              <div><div class="svcName">Qdrant</div><div class="svcVersion" id="svc-qdrant-version">v1.9.0</div></div>
+            </div>
+            <div class="svcRight">
+              <span id="svc-qdrant-pill" class="statusPill ok"><img src="/icons/Status_OK.svg" alt=""></span>
+              <span id="svc-qdrant-uptime" class="svcUptime">—</span>
+            </div>
+            <div class="svcError" id="svc-qdrant-error"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Memory breakdown -->
+      <div class="panel" style="margin-bottom:12px;">
+        <div class="panelHeader">Memory Breakdown</div>
+        <div class="statsGrid5">
+          <div class="statBlock">
+            <div><div class="statBlockLabel">Facts</div><div id="bd-facts" class="statBlockValue">—</div></div>
+            <span class="icoMask sz22" style="mask-image:url('/icons/Facts.svg');-webkit-mask-image:url('/icons/Facts.svg');color:#6dbe4c;opacity:0.8"></span>
+          </div>
+          <div class="statBlock">
+            <div><div class="statBlockLabel">Preferences</div><div id="bd-pref" class="statBlockValue">—</div></div>
+            <span class="icoMask sz22" style="mask-image:url('/icons/Preferences.svg');-webkit-mask-image:url('/icons/Preferences.svg');color:#0ea5e9;opacity:0.8"></span>
+          </div>
+          <div class="statBlock">
+            <div><div class="statBlockLabel">Entities</div><div id="bd-entities" class="statBlockValue">—</div></div>
+            <span class="icoMask sz22" style="mask-image:url('/icons/Entity.svg');-webkit-mask-image:url('/icons/Entity.svg');color:#f59e0b;opacity:0.8"></span>
+          </div>
+          <div class="statBlock">
+            <div><div class="statBlockLabel">Decisions</div><div id="bd-decisions" class="statBlockValue">—</div></div>
+            <span class="icoMask sz22" style="mask-image:url('/icons/Decisions.svg');-webkit-mask-image:url('/icons/Decisions.svg');color:#a78bfa;opacity:0.8"></span>
+          </div>
+          <div class="statBlock">
+            <div><div class="statBlockLabel">Merges</div><div id="bd-merges" class="statBlockValue">—</div></div>
+            <span class="icoMask sz22" style="mask-image:url('/icons/Merge.svg');-webkit-mask-image:url('/icons/Merge.svg');color:#f87171;opacity:0.8"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Recall chart -->
+      <div class="grid" style="margin-bottom:12px;">
+        <div class="panel col-12">
+          <div class="panelHeader">Recall Latency (ms)</div>
+          <div class="chartWrap chartWrap-persistent"><canvas id="lineChart" width="580" height="260"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Row 4: Category donut + Performance + Memory breakdown -->
+      <div class="grid" style="margin-bottom:12px;">
+        <div class="panel col-4">
+          <div class="panelHeader">Category Breakdown</div>
+          <div class="chartWrap" style="gap:20px; flex-direction:row;">
+            <canvas id="donutChart" width="160" height="160"></canvas>
+            <div id="donutLegend" style="display:flex; flex-direction:column; gap:8px; justify-content:center;"></div>
+          </div>
+        </div>
+        <div class="panel col-4">
+          <div class="panelHeader">Performance</div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/RecallFast.svg');-webkit-mask-image:url('/icons/RecallFast.svg')"></span>Fastest Recall</span><span id="perf-fastest" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/RecallSlow.svg');-webkit-mask-image:url('/icons/RecallSlow.svg')"></span>Slowest Recall</span><span id="perf-slowest" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/RecallAvg.svg');-webkit-mask-image:url('/icons/RecallAvg.svg')"></span>Avg Recall</span><span id="perf-avg" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel">Recall / Store Ratio</span><span id="perf-ratio" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel">Embedding Load</span><span id="perf-embed" class="perfValue">—</span></div>
+        </div>
+        <div class="panel col-4">
+          <div class="panelHeader">Storage</div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/Memories.svg');-webkit-mask-image:url('/icons/Memories.svg')"></span>Total Stores</span><span id="st-stores" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/RecallSearch.svg');-webkit-mask-image:url('/icons/RecallSearch.svg')"></span>Total Recalls</span><span id="st-recalls" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel">Indexed Vectors</span><span id="st-vectors" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel">Segments</span><span id="st-segments" class="perfValue">—</span></div>
+          <div class="perfRow"><span class="perfLabel"><span class="icoMask sz14" style="mask-image:url('/icons/Merge.svg');-webkit-mask-image:url('/icons/Merge.svg')"></span>Merges</span><span id="st-merges" class="perfValue">—</span></div>
+        </div>
+      </div>
+
+      <!-- Row 5: Recent Activity -->
+      <div class="grid" style="margin-bottom:12px;">
+        <div class="panel col-12">
+          <div class="panelHeader">Recent Activity</div>
+          <div id="recentActivity"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ MEMORIES ══════════════ -->
+    <section class="page" id="page-memories">
+      <div class="pageHeader">
+        <div class="pageHeaderRight">
+          <select id="mem-sort" style="background:var(--bg-main);border:1px solid #cccccc;padding:6px 10px;color:var(--text);font-size:12px;border-radius:4px;width:140px;">
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="score-desc">Score ↓</option>
+            <option value="score-asc">Score ↑</option>
+          </select>
+          <div class="catFilters">
+            <label class="catChk allNone"><input type="checkbox" id="memAllUsers" onchange="renderMemories()"> All Users</label>
+            <label class="catChk allNone"><input type="checkbox" id="catAll" checked onchange="toggleAllCats(this.checked)"> All</label>
+            <label class="catChk"><input type="checkbox" class="catBox" value="fact"       checked onchange="renderMemories()"> Fact</label>
+            <label class="catChk"><input type="checkbox" class="catBox" value="preference" checked onchange="renderMemories()"> Pref</label>
+            <label class="catChk"><input type="checkbox" class="catBox" value="entity"     checked onchange="renderMemories()"> Entity</label>
+            <label class="catChk"><input type="checkbox" class="catBox" value="decision"   checked onchange="renderMemories()"> Decision</label>
+            <label class="catChk"><input type="checkbox" class="catBox" value="other"      checked onchange="renderMemories()"> Other</label>
+          </div>
+          <span id="memCount" style="font-size:11px; color:var(--text-dim); white-space:nowrap;"></span>
+        </div>
+      </div>
+      <div class="memoryGrid" id="memoryGrid"></div>
+    </section>
+
+    <!-- ══════════════ API KEYS ══════════════ -->
+    <section class="page" id="page-apikeys">
+      <div class="panel">
+        <div class="panelHeader">API Keys</div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Model</th><th>Prefix</th><th>Created</th>
+                <th>Last Used</th><th>Recalls</th><th>Stores</th><th>Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="apiKeysBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ CONFIG ══════════════ -->
+    <section class="page" id="page-config">
+      <div class="grid">
+        <div class="panel col-4">
+          <div class="panelHeader">Live Settings</div>
+          <div class="configWarning">
+            <span class="configWarningIcon">⚠</span>
+            Changing these values can drastically affect how memory is stored, retrieved, and merged. Adjust with caution.
+          </div>
+          <div class="sliderRow">
+            <div class="sliderLabel"><span>Similarity Threshold</span><span class="sliderVal" id="simVal">—</span></div>
+            <div class="sliderControl">
+              <input type="range" min="0" max="1" step="0.01" id="simSlider" oninput="syncConfigInput('sim')">
+              <input type="number" min="0" max="1" step="0.01" id="simInput" oninput="syncConfigSlider('sim')">
+            </div>
+          </div>
+          <div class="sliderRow">
+            <div class="sliderLabel"><span>Recall Threshold</span><span class="sliderVal" id="recVal">—</span></div>
+            <div class="sliderControl">
+              <input type="range" min="0" max="1" step="0.01" id="recSlider" oninput="syncConfigInput('rec')">
+              <input type="number" min="0" max="1" step="0.01" id="recInput" oninput="syncConfigSlider('rec')">
+            </div>
+          </div>
+          <div class="sliderRow">
+            <div class="sliderLabel"><span>Hybrid Alpha</span><span class="sliderVal" id="alphaVal">—</span></div>
+            <div class="sliderControl">
+              <input type="range" min="0" max="1" step="0.01" id="alphaSlider" oninput="syncConfigInput('alpha')">
+              <input type="number" min="0" max="1" step="0.01" id="alphaInput" oninput="syncConfigSlider('alpha')">
+            </div>
+          </div>
+          <div class="formGroup configFieldGroup configDecayGroup" style="margin-top:14px;">
+            <label for="decayInput">Decay Rate (DECAY_LAMBDA)</label>
+            <input type="number" id="decayInput" class="configCompactInput" step="0.0000000001" min="0" inputmode="decimal">
+            <div class="hintText configRestartHint">Use scientific notation if needed, for example <code>1e-10</code>. Lower values decay more slowly.</div>
+          </div>
+          <div class="formActions configDecayActions" style="margin-top:6px;">
+            <button class="btn btn-primary btn-sm" onclick="saveConfig()">SAVE SETTINGS</button>
+          </div>
+        </div>
+
+        <div class="panel col-4">
+          <div class="formGroup configFieldGroup" style="margin-bottom:12px;">
+            <label>Embedding Model</label>
+            <input type="text" id="cfg-embedding" readonly>
+          </div>
+          <div class="configPortsBlock">
+            <div class="configPortsHeader">Ports</div>
+            <div class="configPortsRow">
+              <div class="configPortField">
+                <label for="cfg-port-api">API</label>
+                <input type="number" id="cfg-port-api" class="configPortInput" min="1" max="65535" step="1" inputmode="numeric">
+              </div>
+              <div class="configPortField">
+                <label for="cfg-port-proxy">Proxy</label>
+                <input type="number" id="cfg-port-proxy" class="configPortInput" min="1" max="65535" step="1" inputmode="numeric">
+              </div>
+              <div class="configPortField">
+                <label for="cfg-port-qdrant">Qdrant</label>
+                <input type="number" id="cfg-port-qdrant" class="configPortInput" min="1" max="65535" step="1" inputmode="numeric">
+              </div>
+            </div>
+          </div>
+          <div class="formActions configPortActions">
+            <button class="btn btn-primary btn-sm" onclick="saveConfig(true)">SAVE &amp; RESTART</button>
+          </div>
+          <div class="formActions configRestartNoteWrap">
+            <div class="configRestartText">Restart Required</div>
+          </div>
+        </div>
+
+        <div class="panel col-4">
+          <div class="panelHeader">Users</div>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th><th>Created</th><th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ DOCS ══════════════ -->
+    <section class="page" id="page-docs">
+      <div class="panel" style="max-width:860px;margin:0 auto;">
+        <div class="docsTabs">
+          <button class="docsTab active" onclick="switchDocsTab('setup')">Setup</button>
+          <button class="docsTab" onclick="switchDocsTab('api')">API Reference</button>
+          <button class="docsTab" onclick="switchDocsTab('integrations')">Integrations</button>
+          <button class="docsTab" onclick="switchDocsTab('troubleshooting')">Troubleshooting</button>
+        </div>
+
+        <!-- ── SETUP ── -->
+        <div class="docsPane active docsContent" id="docsPane-setup">
+          <h2>Prerequisites</h2>
+          <ul>
+            <li><strong>Node.js</strong> v20 or higher</li>
+            <li><strong>RAM:</strong> 4GB minimum, 8GB+ recommended for local embeddings</li>
+          </ul>
+
+          <h2>Installation</h2>
+          <pre>git clone &lt;your-repo-url&gt;
+cd neural-nexus
+npm install</pre>
+
+          <h2>Starting Neural Nexus</h2>
+          <p>Run everything at once:</p>
+          <pre>npm run nexus</pre>
+          <p>This starts Qdrant (port <code>5304</code>), the API server (port <code>8008</code>), and the dashboard (port <code>6969</code>).</p>
+
+          <h2>Configuration (.env)</h2>
+          <h3>API Server</h3>
+          <ul>
+            <li><code>PORT</code> — Default <code>8008</code></li>
+            <li><code>NEXUS_PASSWORD</code> — Dashboard admin password</li>
+          </ul>
+          <h3>Qdrant</h3>
+          <ul>
+            <li><code>QDRANT_URL</code> — Default <code>http://localhost:5304</code></li>
+            <li><code>QDRANT_COLLECTION</code> — Default <code>neural_nexus_memories</code></li>
+          </ul>
+          <h3>Embeddings</h3>
+          <ul>
+            <li><code>EMBEDDING_MODEL</code> — Default <code>Xenova/bge-small-en-v1.5</code></li>
+            <li><code>EMBEDDING_DEVICE</code> — <code>cpu</code> or <code>cuda</code></li>
+          </ul>
+          <h3>Authentication</h3>
+          <ul>
+            <li><code>AUTH_ENABLED</code> — Set <code>true</code> to enable JWT auth</li>
+            <li><code>AUTH_SECRET</code> — Secret key for signing JWTs</li>
+            <li><code>AUTH_TOKEN_EXPIRY</code> — e.g. <code>30d</code></li>
+          </ul>
+          <h3>Memory Tuning</h3>
+          <ul>
+            <li><code>SIMILARITY_THRESHOLD</code> — Default <code>0.95</code>. How close two memories must be to merge.</li>
+            <li><code>RECALL_THRESHOLD</code> — Default <code>0.01</code>. Minimum relevance score to return a memory.</li>
+            <li><code>DECAY_LAMBDA</code> — Default <code>1e-10</code>. Lower = memories last longer.</li>
+            <li><code>HYBRID_ALPHA</code> — Default <code>0.7</code>. Balance between vector and keyword search.</li>
+          </ul>
+        </div>
+
+        <!-- ── API REFERENCE ── -->
+        <div class="docsPane docsContent" id="docsPane-api">
+          <h2>Authentication</h2>
+          <p>All endpoints except <code>/health</code> and <code>/auth/login</code> require authentication via one of:</p>
+          <ul>
+            <li><code>Authorization: Bearer &lt;token&gt;</code> — JWT from login</li>
+            <li><code>X-Api-Key: sk-xxxxxxxx</code> — API key for agent integrations</li>
+          </ul>
+
+          <h3>Token Scopes</h3>
+          <ul>
+            <li><code>memory:read</code> — recall, export</li>
+            <li><code>memory:write</code> — store, import</li>
+            <li><code>memory:update</code> — reinforce</li>
+            <li><code>memory:delete</code> — delete memories</li>
+            <li><code>admin:users</code> — manage users</li>
+            <li><code>admin:tokens</code> — manage tokens</li>
+          </ul>
+
+          <h2>Auth Endpoints</h2>
+          <h3><span class="badge badge-post">POST</span>/auth/login</h3>
+          <pre>// Request
+{ "username": "admin", "password": "yourpassword" }
+// Response
+{ "token": "eyJ..." }</pre>
+
+          <h3><span class="badge badge-post">POST</span>/auth/token</h3>
+          <pre>// Request
+{ "userId": "uuid", "description": "My Agent", "scopes": ["memory:read", "memory:write"] }
+// Response
+{ "token": "eyJ..." }</pre>
+
+          <h3><span class="badge badge-get">GET</span>/auth/tokens</h3>
+          <p>List active tokens. Query param: <code>userId</code> (admin only).</p>
+
+          <h3><span class="badge badge-delete">DELETE</span>/auth/tokens/:tokenId</h3>
+          <p>Revoke a token. Requires <code>admin:tokens</code> scope.</p>
+
+          <h2>Core Endpoints</h2>
+          <h3><span class="badge badge-post">POST</span>/store</h3>
+          <pre>// Request
+{ "text": "User prefers dark mode", "category": "preference" }
+// Response
+{ "status": "stored" }</pre>
+
+          <h3><span class="badge badge-post">POST</span>/recall</h3>
+          <pre>// Request
+{ "query": "What are the user's preferences?", "limit": 5 }
+// Response
+{ "memories": [{ "id": "...", "text": "...", "score": 0.91, "category": "preference" }] }</pre>
+
+          <h3><span class="badge badge-post">POST</span>/reinforce</h3>
+          <pre>{ "memory_id": "uuid", "strength_adjustment": 0.05 }</pre>
+
+          <h3><span class="badge badge-get">GET</span>/audit</h3>
+          <p>Returns the memory replacement audit log.</p>
+
+          <h3><span class="badge badge-get">GET</span>/health</h3>
+          <pre>{ "status": "ok", "components": { "server": {...}, "qdrant": {...} } }</pre>
+
+          <h3><span class="badge badge-get">GET</span>/config</h3>
+          <p>Returns live server configuration values.</p>
+
+          <h2>Admin Endpoints</h2>
+          <h3><span class="badge badge-get">GET</span>/admin/users</h3>
+          <h3><span class="badge badge-post">POST</span>/admin/users</h3>
+          <pre>{ "username": "alice", "password": "secret" }</pre>
+          <h3><span class="badge badge-delete">DELETE</span>/admin/users/:id</h3>
+
+          <h3><span class="badge badge-get">GET</span>/admin/api-keys</h3>
+          <h3><span class="badge badge-post">POST</span>/admin/api-keys</h3>
+          <pre>{ "name": "my-agent", "model_name": "claude-sonnet-4-6" }</pre>
+          <h3><span class="badge badge-delete">DELETE</span>/admin/api-keys/:id</h3>
+
+          <h3><span class="badge badge-get">GET</span>/admin/export</h3>
+          <p>Export all memories as NDJSON.</p>
+          <h3><span class="badge badge-post">POST</span>/admin/import</h3>
+          <p>Import memories from NDJSON. Supports streaming for large files.</p>
+
+          <h2>Internal Metrics</h2>
+          <p>Operational stats are available through the main application endpoints:</p>
+          <ul>
+            <li><code>GET /health</code> — live service and performance snapshot</li>
+            <li><code>GET /admin/stats/categories</code> — category breakdown</li>
+            <li><code>GET /admin/stats/merges</code> — merge history summary</li>
+          </ul>
+        </div>
+
+        <!-- ── INTEGRATIONS ── -->
+        <div class="docsPane docsContent" id="docsPane-integrations">
+          <h2>MCP Server (Claude / Cursor / VS Code)</h2>
+          <p>Add to your <code>claude_desktop_config.json</code> or IDE MCP settings:</p>
+          <pre>{
+  "mcpServers": {
+    "neural-nexus": {
+      "command": "node",
+      "args": ["/absolute/path/to/dist/src/mcp.js"]
+    }
+  }
+}</pre>
+          <p>The agent will have access to <code>recall_memory</code> and <code>store_memory</code> tools automatically.</p>
+
+          <h2>Direct REST API</h2>
+          <p>Any application can connect directly using an API key:</p>
+          <pre>curl -X POST http://localhost:8008/store \
+  -H "X-Api-Key: sk-your-key" \
+  -H "Content-Type: application/json" \
+  -d '{ "text": "User prefers dark mode", "category": "preference" }'</pre>
+
+          <h2>OpenClaw</h2>
+          <p>Add to your OpenClaw <code>config.yaml</code>:</p>
+          <pre>{
+  "mcpServers": {
+    "neural-nexus": {
+      "command": "node",
+      "args": ["C:/PATH/TO/NeuralNexus/dist/src/mcp.js"]
+    }
+  }
+}</pre>
+        </div>
+
+        <!-- ── TROUBLESHOOTING ── -->
+        <div class="docsPane docsContent" id="docsPane-troubleshooting">
+          <h2>Connection Issues</h2>
+          <h3>Qdrant "Connection Refused"</h3>
+          <p>Qdrant is not running or the URL is wrong. Run <code>npm run nexus</code> to auto-start it, or check <code>QDRANT_URL</code> in your <code>.env</code>. Default port is <code>5304</code>.</p>
+
+          <h2>Retrieval Quality</h2>
+          <h3>Memories not showing up in Recall</h3>
+          <p><code>RECALL_THRESHOLD</code> may be too high. Lower it to <code>0.05</code> in <code>.env</code>. Also verify the correct <code>userid</code> is being used.</p>
+
+          <h3>Deduplication merging too aggressively</h3>
+          <p><code>SIMILARITY_THRESHOLD</code> is too low. Increase it to <code>0.95</code> or <code>0.98</code> for stricter merging. Adjust in the Config page or <code>.env</code>.</p>
+
+          <h2>Authentication</h2>
+          <h3>Recovering your password</h3>
+          <p>Open <code>.env</code> and find <code>NEXUS_PASSWORD</code>. That is your dashboard login password.</p>
+
+          <h3>Tokens stopped working after password change</h3>
+          <p>Changing <code>AUTH_SECRET</code> invalidates all existing JWTs. Log in again via the dashboard to get a fresh token. Update any connected agents with the new token.</p>
+
+          <h2>Diagnostics</h2>
+          <pre>curl http://localhost:8008/health</pre>
+          <p>Check <code>GET /audit</code> to see why memories were merged or replaced.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  </div><!-- /#content -->
+</div><!-- /#app -->
+
+<!-- ══════════════ MEMORY DETAIL MODAL ══════════════ -->
+<div class="overlay" id="memModal" onclick="if(event.target===this)closeModal('memModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalTitle">MEMORY DETAIL</div>
+    <input type="hidden" id="memModalId">
+    <div id="memModalBody"></div>
+    <div class="memoryAdminPanel">
+      <div class="memoryAdminTitle">Admin Reassign</div>
+      <div class="formRow">
+        <div class="formGroup">
+          <label for="mem-owner-select">Owner User</label>
+          <select id="mem-owner-select"></select>
+        </div>
+        <div class="formGroup">
+          <label for="mem-agent-input">Agent ID</label>
+          <input type="text" id="mem-agent-input" placeholder="claude-code">
+        </div>
+      </div>
+      <div class="hintText">Use this to repair legacy records: the owner is the human tenant, and the agent is provenance only.</div>
+    </div>
+    <div class="modalActions">
+      <button class="btn btn-primary" onclick="reassignMemoryFromModal()">REASSIGN</button>
+      <button class="btn btn-destructive" onclick="closeModal('memModal')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADD MEMORY MODAL ══════════════ -->
+<div class="overlay" id="addMemoryModal" onclick="if(event.target===this)closeModal('addMemoryModal')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="modalTitle" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <svg width="20" height="20" viewBox="0 0 36 36" fill="none" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M10.692 1.088v4.907M18 2.236v3.758m7.308-4.906v4.907M10.692 34.912v-4.907M18 33.764v-3.758m7.308 4.906v-4.907m-24.22-4.593h4.907M2.236 18h3.758m-4.906-7.412h4.907m28.917 14.824h-4.907M33.764 18h-3.758m4.906-7.412h-4.907M8.5 30.005h19c1.357 0 2.505-1.148 2.505-2.506V8.5c0-1.357-1.148-2.506-2.505-2.506h-19c-1.357 0-2.505 1.148-2.505 2.506v19c0 1.357 1.148 2.506 2.505 2.506m5.429-5.429h8.038c1.357 0 2.505-1.148 2.505-2.506v-8.038c0-1.357-1.148-2.506-2.505-2.506h-8.038c-1.357 0-2.505 1.148-2.505 2.506v8.038c0 1.357 1.148 2.506 2.505 2.506M18 14.48v7.039M13.999 18h8.002"/></svg>
+      <span style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:600;color:var(--blue);letter-spacing:0.06em;">ADD MEMORY</span>
+    </div>
+    <div class="formGroup">
+      <label>Category</label>
+      <select id="am-category">
+        <option value="fact">Fact</option>
+        <option value="preference">Preference</option>
+        <option value="entity">Entity</option>
+        <option value="decision">Decision</option>
+      </select>
+    </div>
+    <div class="formGroup">
+      <label>Memory Text</label>
+      <textarea id="am-text" placeholder="Enter memory content…" style="min-height:120px;"></textarea>
+    </div>
+    <div class="modalActions">
+      <button class="btn btn-cancel" onclick="closeModal('addMemoryModal')">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveMemoryModal()">SAVE MEMORY</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EDIT USER MODAL ══════════════ -->
+<div class="overlay" id="editUserModal" onclick="if(event.target===this)closeModal('editUserModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalTitle">EDIT USER</div>
+    <input type="hidden" id="eu-id">
+    <div class="formRow">
+      <div class="formGroup"><label>Username</label><input type="text" id="eu-username" placeholder="username"></div>
+      <div class="formGroup"><label>New Password</label><input type="password" id="eu-password" placeholder="leave blank to keep"></div>
+    </div>
+    <div class="formRow">
+      <div class="formGroup"><label>First Name</label><input type="text" id="eu-fname" placeholder="First"></div>
+      <div class="formGroup"><label>Last Name</label><input type="text" id="eu-lname" placeholder="Last"></div>
+    </div>
+    <div class="formRow">
+      <div class="formGroup"><label>Email</label><input type="email" id="eu-email" placeholder="user@example.com"></div>
+      <div class="formGroup"><label>Phone</label><input type="tel" id="eu-phone" placeholder="+1 555 0000"></div>
+    </div>
+    <div class="modalActions">
+      <button class="btn btn-cancel" onclick="closeModal('editUserModal')">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveEditUser()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADD USER MODAL ══════════════ -->
+<div class="overlay" id="addUserModal" onclick="if(event.target===this)closeModal('addUserModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalTitle">CREATE USER</div>
+    <div class="formRow">
+      <div class="formGroup"><label>Username</label><input type="text" id="au-username" placeholder="username"></div>
+      <div class="formGroup"><label>Password</label><input type="password" id="au-password" placeholder="••••••••"></div>
+    </div>
+    <div class="formRow">
+      <div class="formGroup"><label>First Name</label><input type="text" id="au-fname" placeholder="First"></div>
+      <div class="formGroup"><label>Last Name</label><input type="text" id="au-lname" placeholder="Last"></div>
+    </div>
+    <div class="formRow">
+      <div class="formGroup"><label>Email</label><input type="email" id="au-email" placeholder="user@example.com"></div>
+      <div class="formGroup"><label>Phone</label><input type="tel" id="au-phone" placeholder="+1 555 0000"></div>
+    </div>
+    <div class="modalActions">
+      <button class="btn btn-cancel" onclick="closeModal('addUserModal')">CANCEL</button>
+      <button class="btn btn-primary" onclick="createUser()">CREATE USER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADD API KEY MODAL ══════════════ -->
+<div class="overlay" id="addKeyModal" onclick="if(event.target===this)closeModal('addKeyModal')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:420px;">
+    <div class="modalTitle" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <svg width="20" height="20" viewBox="0 0 36 36" fill="var(--blue)"><path d="M18.097 2.899c3.965 0 7.19 3.249 7.19 7.243a7.26 7.26 0 0 1-2.398 5.393l-.834.75.202 1.103L25.133 33.1H11.058l2.876-15.712.202-1.103-.834-.75a7.26 7.26 0 0 1-2.398-5.393c0-3.994 3.226-7.243 7.19-7.243m.003-2.005c-5.082 0-9.196 4.148-9.196 9.249a9.23 9.23 0 0 0 3.062 6.884L8.929 33.599a1.275 1.275 0 0 0 1.242 1.507h15.852c.787 0 1.384-.725 1.242-1.507l-3.034-16.572a9.24 9.24 0 0 0 3.062-6.884c0-5.101-4.115-9.249-9.196-9.249"/></svg>
+      <span style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:600;color:var(--blue);letter-spacing:0.06em;">ADD API KEY</span>
+    </div>
+    <div class="formGroup"><label>Key Name</label><input type="text" id="ak-name" placeholder="my-agent-key"></div>
+    <div class="formGroup"><label>Model Name</label><input type="text" id="ak-model" placeholder="claude-opus-4-6"></div>
+    <div class="keyReveal" id="keyReveal" style="margin-top:12px;">
+      <code id="keyRevealCode"></code>
+      <button class="btn btn-copy btn-sm" onclick="copyKey()">COPY</button>
+      <span class="copiedMsg" id="copiedMsg" style="display:none;">Copied!</span>
+    </div>
+    <div class="formActions" style="margin-top:14px;gap:8px;display:flex;justify-content:flex-end;">
+      <button class="btn btn-cancel" onclick="closeModal('addKeyModal')">CANCEL</button>
+      <button class="btn btn-primary" onclick="generateKey()">GENERATE KEY</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CONFIRM MODAL ══════════════ -->
+<div class="overlay" id="confirmModal" onclick="if(event.target===this)closeModal('confirmModal')">
+  <div class="modal warning-modal" onclick="event.stopPropagation()">
+    <div class="warn-icon" id="confirmIcon">?</div>
+    <div class="warn-msg" id="confirmMsg">Are you sure?</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+      <button class="btn btn-cancel" onclick="closeModal('confirmModal')">CANCEL</button>
+      <button class="btn btn-destructive" id="confirmOkBtn">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ WARNING MODAL ══════════════ -->
+<div class="overlay" id="warningModal" onclick="if(event.target===this)closeModal('warningModal')">
+  <div class="modal warning-modal" onclick="event.stopPropagation()">
+    <div class="warn-icon">!</div>
+    <div class="warn-msg" id="warnMsg">Warning message.</div>
+    <button class="btn btn-destructive" onclick="closeModal('warningModal')">DISMISS</button>
+  </div>
+</div>
+
+<!-- ══════════════ SUCCESS TOAST ══════════════ -->
+<div id="toast" style="
+  position:fixed; bottom:24px; right:24px;
+  background:var(--panel-alt); border:1px solid var(--green);
+  color:var(--green); padding:10px 18px; border-radius:6px;
+  font-size:12px; font-weight:600; letter-spacing:0.04em;
+  opacity:0; transition:opacity 0.2s; pointer-events:none; z-index:9999;">✓ Success</div>
+
+<script src="./scripts/dashboard.js"></script>
+<!-- ══ LOGIN OVERLAY ══ -->
+<div id="loginOverlay">
+  <div class="loginBox">
+    <div class="loginTitle">NEURAL NEXUS</div>
+    <div class="formGroup"><label>Username</label><input id="login-user" type="text" value="admin" autocomplete="username"></div>
+    <div class="formGroup"><label>Password</label><input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <div id="login-error"></div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">CONNECT</button>
+  </div>
+</div>
+</body>
+</html>

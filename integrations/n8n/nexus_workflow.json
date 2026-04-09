@@ -1,0 +1,40 @@
+{
+  "name": "Neural Nexus Memory Connector",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://neural-nexus:3000/store",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{$json.text}}\",\n  \"category\": \"{{$json.category || 'fact'}}\"\n}",
+        "options": {}
+      },
+      "name": "Store Memory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://neural-nexus:3000/recall",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{$json.query}}\",\n  \"limit\": 5\n}",
+        "options": {}
+      },
+      "name": "Recall Memory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        450,
+        300
+      ]
+    }
+  ],
+  "connections": {}
+}

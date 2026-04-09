@@ -1,0 +1,183 @@
+(base) PS C:\Users\Josh\Documents\0000000000-MyApps\Neural_Nexus\NeuralNexus_universal> cd qdrant-server
+  __ _  __| |_ __ __ _ _ __ | |_  
+ / _` |/ _` | '__/ _` | '_ \| __| 
+| (_| | (_| | | | (_| | | | | |_  
+ \__, |\__,_|_|  \__,_|_| |_|\__| 
+    |_|                           
+
+Version: 1.17.0, build: 4ab6d2ee
+Access web UI at http://localhost:6333/dashboard
+
+2026-03-15T01:43:50.935991Z  WARN qdrant::settings: Config file not found: config/config
+2026-03-15T01:43:50.936093Z  WARN qdrant::settings: Config file not found: config/development
+2026-03-15T01:43:50.954530Z  WARN qdrant: There is a potential issue with the filesystem for storage path ./storage. Details: Filesystem type check is not supported on this platform
+2026-03-15T01:43:50.954840Z  INFO storage::content_manager::consensus::persistent: Loading raft state from ./storage\raft_state.json
+2026-03-15T01:43:50.957355Z  INFO qdrant: Distributed mode disabled
+2026-03-15T01:43:50.957434Z  INFO qdrant: Telemetry reporting enabled, id: d27bae9f-525f-4d4f-ba10-9e5538da1952
+2026-03-15T01:43:50.959039Z  WARN qdrant::actix::web_ui: Static content folder for Web UI './static' does not exist
+2026-03-15T01:43:50.959153Z  INFO qdrant::actix: TLS disabled for REST API
+2026-03-15T01:43:50.960063Z  INFO qdrant::actix: Qdrant HTTP listening on 6333
+2026-03-15T01:43:50.960128Z  INFO actix_server::builder: starting 31 workers
+2026-03-15T01:43:50.960230Z  INFO actix_server::server: Actix runtime found; starting in Actix runtime
+2026-03-15T01:43:50.960329Z  INFO actix_server::server: starting service: "actix-web-service-0.0.0.0:6333", workers: 31, listening on: 0.0.0.0:6333
+2026-03-15T01:43:50.963082Z  INFO qdrant::tonic: Qdrant gRPC listening on 6334
+2026-03-15T01:43:50.963212Z  INFO qdrant::tonic: TLS disabled for gRPC API
+2026-03-15T01:44:33.329848Z  INFO storage::content_manager::toc::collection_meta_ops: Deleting collection accuracy_test_collection
+2026-03-15T01:44:33.329952Z  INFO storage::content_manager::toc::collection_meta_ops: Deleting collection actual_integration_test_collection
+2026-03-15T01:44:33.330413Z  INFO actix_web::middleware::logger: 127.0.0.1 "DELETE /collections/actual_integration_test_collection HTTP/1.1" 200 70 "-" "qdrant-js/1.16.2" 0.000561
+2026-03-15T01:44:33.330413Z  INFO actix_web::middleware::logger: 127.0.0.1 "DELETE /collections/accuracy_test_collection HTTP/1.1" 200 70 "-" "qdrant-js/1.16.2" 0.000783
+2026-03-15T01:44:33.522145Z  INFO actix_web::middleware::logger: 127.0.0.1 "GET /collections HTTP/1.1" 200 80 "-" "qdrant-js/1.16.2" 0.000122
+2026-03-15T01:44:33.526109Z  INFO storage::content_manager::toc::collection_meta_ops: Creating collection actual_integration_test_collection
+2026-03-15T01:44:33.539344Z  INFO actix_web::middleware::logger: 127.0.0.1 "GET /collections HTTP/1.1" 200 80 "-" "qdrant-js/1.16.2" 0.000102
+2026-03-15T01:44:33.542984Z  INFO storage::content_manager::toc::collection_meta_ops: Creating collection accuracy_test_collection
+2026-03-15T01:44:33.610115Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection HTTP/1.1" 200 69 "-" "qdrant-js/1.16.2" 0.084206
+2026-03-15T01:44:33.619908Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection/index HTTP/1.1" 200 92 "-" "qdrant-js/1.16.2" 0.007012
+2026-03-15T01:44:33.631676Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection/index HTTP/1.1" 200 93 "-" "qdrant-js/1.16.2" 0.009061
+2026-03-15T01:44:33.647188Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/actual_integration_test_collection/points/search HTTP/1.1" 200 67 "-" "qdrant-js/1.16.2" 0.001194
+2026-03-15T01:44:33.668406Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.691597Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection HTTP/1.1" 200 69 "-" "qdrant-js/1.16.2" 0.148707
+2026-03-15T01:44:33.696338Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection/index HTTP/1.1" 200 92 "-" "qdrant-js/1.16.2" 0.002454
+2026-03-15T01:44:33.701434Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection/index HTTP/1.1" 200 92 "-" "qdrant-js/1.16.2" 0.002848
+2026-03-15T01:44:33.705141Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.711684Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.712464Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 67 "-" "qdrant-js/1.16.2" 0.000494
+2026-03-15T01:44:33.719413Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable full text index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.742363Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.747892Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable full text index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.750362Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection/points?wait=true HTTP/1.1" 200 89 "-" "qdrant-js/1.16.2" 0.099447
+2026-03-15T01:44:33.754598Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable full text index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.757901Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/actual_integration_test_collection/points/search HTTP/1.1" 200 256 "-" "qdrant-js/1.16.2" 0.000348
+2026-03-15T01:44:33.764205Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.766282Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection/points?wait=true HTTP/1.1" 200 89 "-" "qdrant-js/1.16.2" 0.006462
+2026-03-15T01:44:33.777647Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.786110Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable full text index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.788135Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection/points?wait=true HTTP/1.1" 200 90 "-" "qdrant-js/1.16.2" 0.071938
+2026-03-15T01:44:33.795135Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 250 "-" "qdrant-js/1.16.2" 0.000346
+2026-03-15T01:44:33.800921Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.802868Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection/points?wait=true HTTP/1.1" 200 89 "-" "qdrant-js/1.16.2" 0.005735
+2026-03-15T01:44:33.809571Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 346 "-" "qdrant-js/1.16.2" 0.000294
+2026-03-15T01:44:33.814303Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.816079Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/accuracy_test_collection/points?wait=true HTTP/1.1" 200 90 "-" "qdrant-js/1.16.2" 0.004482        
+2026-03-15T01:44:33.822756Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 433 "-" "qdrant-js/1.16.2" 0.000348
+2026-03-15T01:44:33.828165Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:33.828750Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/scroll HTTP/1.1" 200 95 "-" "qdrant-js/1.16.2" 0.004598
+2026-03-15T01:44:33.834889Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/scroll HTTP/1.1" 200 94 "-" "qdrant-js/1.16.2" 0.000582
+2026-03-15T01:44:33.834993Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 434 "-" "qdrant-js/1.16.2" 0.000777
+2026-03-15T01:44:33.840452Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/scroll HTTP/1.1" 200 93 "-" "qdrant-js/1.16.2" 0.000271
+2026-03-15T01:44:33.840494Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/accuracy_test_collection/points/search HTTP/1.1" 200 341 "-" "qdrant-js/1.16.2" 0.000388
+ger: 127.0.0.1 "POST /collections/actual_integration_test_collection/points/search HTTP/1.1" 200 255 "-" "qdrant-js/1.16.2" 0.000334
+2026-03-15T01:44:34.305049Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:34.305806Z  INFO actix_web::middleware::logger: 127.0.0.1 "PUT /collections/actual_integration_test_collection/points?wait=true HTTP/1.1" 200 90 "-" "qdrant-js/1.16.2" 0.001445
+2026-03-15T01:44:34.335824Z ERROR collection::collection_manager::collection_updater: Update operation failed: Service internal error: failed to open mutable map index on gridstore: Service error: The system cannot find the path specified. (os error 3)
+2026-03-15T01:44:34.815154Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/actual_integration_test_collection/points/search HTTP/1.1" 200 275 "-" "qdrant-js/1.16.2" 0.000441
+2026-03-15T01:44:34.815154Z  INFO actix_web::middleware::logger: 127.0.0.1 "POST /collections/actual_integration_test_collection/points/scroll HTTP/1.1" 200 279 "-" "qdrant-js/1.16.2" 0.000352
+
+
+Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.
+
+(base) PS C:\Users\Josh\Documents\0000000000-MyApps\Neural_Nexus\NeuralNexus_universal> npx vitest run
+
+ RUN  v4.0.18 C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal
+
+ ✓ tests/DecayEngine.test.ts (4 tests) 4ms
+ ✓ tests/ReplacementAuditService.test.ts (2 tests) 73ms
+ ✓ tests/types_validation.test.ts (1 test) 2ms
+ ✓ tests/config.test.ts (4 tests) 6ms
+stderr | tests/MemoryConsolidator.test.ts > LLMConsolidator > falls back to concatenation if API fails                                                                                         
+[LLMConsolidator] Consolidation failed: Error: API Down                                                                                                                                        
+    at C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/tests/MemoryConsolidator.test.ts:63:44                                                                     
+    at file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:145:11                                                   
+    at file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:915:26                                                   
+    at file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:1243:20                                                  
+    at new Promise (<anonymous>)                                                                                                                                                               
+    at runWithTimeout (file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:1209:10)                                 
+    at file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:1653:37                                                  
+    at Traces.$ (file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/vitest/dist/chunks/traces.CCmnQaNT.js:142:27)                               
+    at trace (file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/vitest/dist/chunks/test.B8ej_ZHS.js:239:21)                                    
+    at runTest (file:///C:/Users/Josh/Documents/0000000000-MyApps/Neural_Nexus/NeuralNexus_universal/node_modules/@vitest/runner/dist/index.js:1653:12)                                        
+                                                                                                                                                                                               
+ ✓ tests/MemoryConsolidator.test.ts (4 tests) 8ms                                                                                                                                              
+ ✓ tests/EmbeddingService.test.ts (6 tests) 7ms
+ ✓ tests/safeguards_v2.test.ts (2 tests) 14ms
+stderr | tests/StorageService.test.ts > StorageService > creates collection if it does not exist during initialization                                                                         
+Api key is used with unsecure connection.                                                                                                                                                      
+                                                                                                                                                                                               
+stderr | tests/StorageService.test.ts > StorageService > does not create collection if it already exists during initialization                                                                 
+Api key is used with unsecure connection.                                                                                                                                                      
+                                                                                                                                                                                               
+stderr | tests/StorageService.test.ts > StorageService > upserts a point to storage                                                                                                            
+Api key is used with unsecure connection.                                                                                                                                                      
+                                                                                                                                                                                               
+stderr | tests/StorageService.test.ts > StorageService > searches for points (vector only)                                                                                                     
+Api key is used with unsecure connection.                                                                                                                                                      
+                                                                                                                                                                                               
+stderr | tests/StorageService.test.ts > StorageService > searches with userid filter (vector only)                                                                                             
+Api key is used with unsecure connection.                                                                                                                                                      
+                                                                                                                                                                                               
+stderr | tests/StorageService.test.ts > StorageService > performs keyword search when query is provided and merges results                                                                     
+Api key is used with unsecure connection.                                                                                                                                                      
+
+stderr | tests/StorageService.test.ts > StorageService > sorts keyword search results by local term frequency
+Api key is used with unsecure connection.
+
+stderr | tests/StorageService.test.ts > StorageService > applies userid filter to keyword search
+Api key is used with unsecure connection.
+
+stderr | tests/StorageService.test.ts > StorageService > updates payload
+Api key is used with unsecure connection.
+
+stderr | tests/StorageService.test.ts > StorageService > updates access time
+Api key is used with unsecure connection.
+
+ ✓ tests/StorageService.test.ts (10 tests) 23ms                                                                                                                                                
+{"level":30,"time":1773539073135,"pid":398228,"hostname":"CreationStation","reqId":"req-1","req":{"method":"POST","url":"/v1/chat/completions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}                                                                                                                                                                   
+{"level":30,"time":1773539073141,"pid":398228,"hostname":"CreationStation","reqId":"req-1","res":{"statusCode":200},"responseTime":5.068699985742569,"msg":"request completed"}                
+{"level":30,"time":1773539073143,"pid":398228,"hostname":"CreationStation","reqId":"req-2","req":{"method":"POST","url":"/v1/chat/completions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}                                                                                                                                                                   
+{"level":30,"time":1773539073145,"pid":398228,"hostname":"CreationStation","reqId":"req-2","res":{"statusCode":200},"responseTime":1.4174000024795532,"msg":"request completed"}               
+ ✓ tests/openai-proxy.test.ts (2 tests) 21ms
+ ✓ tests/index.test.ts (6 tests) 6ms
+ ✓ tests/final_safeguards.test.ts (5 tests) 5ms
+stdout | tests/actual-integration.test.ts > Actual Multi-Container Integration Test
+Cleaning up and connecting to local Qdrant instance...
+
+ ✓ tests/NeuralNexusCore.test.ts (5 tests) 16ms
+{"level":30,"time":1773539073413,"pid":395904,"hostname":"CreationStation","msg":"Neural Nexus Core initialized"}
+{"level":30,"time":1773539073414,"pid":395904,"hostname":"CreationStation","reqId":"req-1","req":{"method":"GET","url":"/health","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1773539073417,"pid":395904,"hostname":"CreationStation","reqId":"req-1","res":{"statusCode":200},"responseTime":2.619700014591217,"msg":"request completed"}
+{"level":30,"time":1773539073418,"pid":395904,"hostname":"CreationStation","reqId":"req-2","req":{"method":"POST","url":"/store","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1773539073421,"pid":395904,"hostname":"CreationStation","reqId":"req-2","res":{"statusCode":201},"responseTime":2.766099989414215,"msg":"request completed"}
+{"level":30,"time":1773539073422,"pid":395904,"hostname":"CreationStation","reqId":"req-3","req":{"method":"POST","url":"/recall","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1773539073423,"pid":395904,"hostname":"CreationStation","reqId":"req-3","res":{"statusCode":200},"responseTime":0.7569000124931335,"msg":"request completed"}
+ ✓ tests/server.test.ts (3 tests) 29ms
+ ✓ tests/telegram-bot.test.ts (2 tests) 6ms
+ ✓ tests/mcp.test.ts (3 tests) 8ms
+ ✓ tests/retrieval_accuracy.test.ts (3 tests) 526ms
+stdout | tests/actual-integration.test.ts > Actual Multi-Container Integration Test
+Integration test complete.
+
+ ❯ tests/actual-integration.test.ts (2 tests | 1 failed) 1503ms                                                                                                                                
+     ✓ performs end-to-end store and hybrid recall using actual vector embeddings and Qdrant DB  645ms                                                                                         
+     × performs semantic deduplication against actual database 536ms                                                                                                                           
+                                                                                                                                                                                               
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+                                                                                                                                                                                               
+ FAIL  tests/actual-integration.test.ts > Actual Multi-Container Integration Test > performs semantic deduplication against actual database                                                    
+AssertionError: expected 1 to be greater than 1                                                                                                                                                
+ ❯ tests/actual-integration.test.ts:62:51
+     60|         const res = await core.recall({ query: "organic red apples", limit: 10, userid: "test_user_2" });
+     61|         expect(res.memories.length).toBe(1);
+     62|         expect(res.memories[0].metadata.strength).toBeGreaterThan(1); // Has merged
+       |                                                   ^
+     63|     });
+     64| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 16 passed (17)
+      Tests  1 failed | 63 passed (64)
+   Start at  18:44:32
+   Duration  2.29s (transform 772ms, setup 0ms, import 5.90s, tests 2.26s, environment 2ms)
+
+(base) PS C:\Users\Josh\Documents\0000000000-MyApps\Neural_Nexus\NeuralNexus_universal> 
+(base) PS C:\Users\Josh\Documents\0000000000-MyApps\Neural_Nexus\NeuralNexus_universal> ^A

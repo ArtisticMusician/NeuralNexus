@@ -1,0 +1,98 @@
+# Neural Nexus — Full Configuration Reference
+
+## Live-Editable (apply instantly, no restart)
+
+### Search & Recall
+
+| Setting | Env Var | Default | Type | What it does |
+|---------|---------|---------|------|--------------|
+| Similarity threshold | `SIMILARITY_THRESHOLD` | `0.95` | float 0–1 | How similar two memories must be to be considered duplicates |
+| Recall threshold | `RECALL_THRESHOLD` | `0.01` | float 0–1 | Minimum score a memory needs to be returned in results |
+| Search limit | `SEARCH_LIMIT` | `10` | integer | Max memories returned per recall |
+| RRF K | `RRF_K` | `60` | integer | Reciprocal Rank Fusion constant — higher = less aggressive re-ranking |
+| Hybrid alpha | `HYBRID_ALPHA` | `0.7` | float 0–1 | Balance between vector search (1.0) and keyword search (0.0) |
+
+### Decay
+
+| Setting | Env Var | Default | Type | What it does |
+|---------|---------|---------|------|--------------|
+| Default lambda | `DECAY_LAMBDA` | `1e-10` | float | How fast memories decay in score over time; 0 = no decay |
+| Time unit | `DECAY_TIME_UNIT` | `ms` | enum | Unit used for decay calculation: `ms`, `seconds`, `minutes`, `hours`, `days` |
+
+### Memory Behavior
+
+| Setting | Env Var | Default | Type | What it does |
+|---------|---------|---------|------|--------------|
+| Dedup threshold | `DEDUP_THRESHOLD` | `0.5` | float 0–1 | Similarity score at which two memories are considered the same and merged |
+| Dedup method | `DEDUP_METHOD` | `jaccard` | enum | Algorithm used for dedup: `jaccard`, `cosine`, `substring` |
+| Consolidation enabled | *(no env var)* | `true` | bool | Whether memories get automatically merged over time |
+| Consolidation threshold | *(no env var)* | `4` | integer | How many similar memories trigger consolidation |
+
+### Per-Category Decay (in-memory only, no env var)
+
+| Category | Lambda default | Reinforce default | Notes |
+|----------|---------------|-------------------|-------|
+| preference | `0` | false | Never decays |
+| fact | `1e-10` | true | Very slow decay |
+| entity | `5e-11` | true | Slowest decay |
+| decision | `2e-10` | true | Slow decay |
+| other | `5e-10` | false | Moderate decay |
+
+---
+
+## Restart-Required (editable, take effect after server restart)
+
+### Qdrant / Vector Store
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| Qdrant URL | `QDRANT_URL` | `http://localhost:6333` | |
+| Collection name | `QDRANT_COLLECTION` | `neural_nexus_universal` | Changing creates a new empty collection |
+| Qdrant API key | `QDRANT_API_KEY` | *(empty)* | Only needed for cloud/authenticated Qdrant |
+
+### Embedding
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| Model | `EMBEDDING_MODEL` | `Xenova/bge-small-en-v1.5` | Changing model requires re-indexing all memories |
+| Device | `EMBEDDING_DEVICE` | `cpu` | `cpu` or `cuda` |
+
+### Server
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| Port | `PORT` | `8008` | |
+| Allowed CORS origins | `ALLOWED_ORIGINS` | `localhost:5173, :3000, :6969` | Comma-separated list |
+
+### Auth
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| JWT auth enabled | `AUTH_ENABLED` | `false` | |
+| Token expiry | `AUTH_TOKEN_EXPIRY` | `30d` | e.g. `1d`, `7d`, `30d` |
+
+### Replacement Log
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| Enabled | `REPLACEMENT_LOG_ENABLED` | `true` | Tracks when memories are replaced/merged |
+| SQLite path | `REPLACEMENT_LOG_PATH` | `./data/replacements.sqlite` | |
+
+### OpenAI Proxy (separate service)
+
+| Setting | Env Var | Default | Notes |
+|---------|---------|---------|-------|
+| Proxy port | `OPENAI_PROXY_PORT` | `3001` | |
+| LLM target URL | `LLM_TARGET_URL` | `http://localhost:11434/v1` | Ollama or any OpenAI-compatible endpoint |
+| LLM model | `LLM_MODEL` | `gpt-3.5-turbo` | |
+
+---
+
+## Never Exposed (sensitive secrets — .env only)
+
+| Setting | Env Var | Notes |
+|---------|---------|-------|
+| Dashboard password | `NEXUS_PASSWORD` | Used to log in to the dashboard |
+| JWT signing secret | `AUTH_SECRET` | Signs all JWT tokens |
+| LLM API key | `LLM_API_KEY` | External LLM provider key |
+| Telegram bot token | `TELEGRAM_BOT_TOKEN` | |
