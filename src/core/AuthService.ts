@@ -27,6 +27,7 @@ export interface ApiKeyRecord {
     id: string;
     user_id: string;
     name: string;
+    agentid: string;
     model_name: string;
     key_prefix: string;
     created_at: string;
@@ -110,6 +111,7 @@ export class AuthService {
                 id TEXT PRIMARY KEY,
                 user_id TEXT,
                 name TEXT NOT NULL,
+                agentid TEXT,
                 model_name TEXT NOT NULL DEFAULT '',
                 key_hash TEXT NOT NULL,
                 key_prefix TEXT NOT NULL,
@@ -123,12 +125,15 @@ export class AuthService {
 
         // Migrations for existing databases
         try { await this.db.run("ALTER TABLE users ADD COLUMN password_hash TEXT"); } catch { /* already exists */ }
+        try { await this.db.run("ALTER TABLE api_keys ADD COLUMN agentid TEXT"); } catch { /* already exists */ }
         try { await this.db.run("ALTER TABLE api_keys ADD COLUMN model_name TEXT NOT NULL DEFAULT ''"); } catch { /* already exists */ }
         try { await this.db.run("ALTER TABLE api_keys ADD COLUMN user_id TEXT"); } catch { /* already exists */ }
 
         // Bootstrap: ensure an admin user exists with the configured NEXUS_PASSWORD
         await this.ensureAdminUser();
         await this.backfillApiKeyOwners();
+        await this.normalizeApiKeyAgentIds();
+        await this.ensureUniqueApiKeyAgentIds();
     }
 
     private async ensureAdminUser(): Promise<void> {
@@ -162,6 +167,40 @@ export class AuthService {
         );
         if (!admin) return;
         await this.db.run("UPDATE api_keys SET user_id = ? WHERE user_id IS NULL OR user_id = ''", admin.id);
+    }
+
+    private async normalizeApiKeyAgentIds(): Promise<void> {
+        if (!this.db) return;
+
+        const rows = await this.db.all<Array<{ id: string; name: string; agentid: string | null; model_name: string | null }>>(
+            "SELECT id, name, agentid, model_name FROM api_keys ORDER BY created_at ASC, id ASC"
+        );
+
+        const used = new Set<string>();
+        for (const row of rows) {
+            const baseName = row.name.trim() || `api-key-${row.id.slice(0, 8)}`;
+            const existingAgentId = row.agentid?.trim() || row.model_name?.trim() || "";
+            let nextAgentId = existingAgentId || baseName;
+            let suffix = 2;
+
+            while (used.has(nextAgentId.toLowerCase())) {
+                nextAgentId = `${existingAgentId || baseName}-${suffix}`;
+                suffix += 1;
+            }
+
+            used.add(nextAgentId.toLowerCase());
+
+            if (nextAgentId !== (row.agentid?.trim() || "") || nextAgentId !== (row.model_name?.trim() || "")) {
+                await this.db.run("UPDATE api_keys SET agentid = ?, model_name = ? WHERE id = ?", nextAgentId, nextAgentId, row.id);
+            }
+        }
+    }
+
+    private async ensureUniqueApiKeyAgentIds(): Promise<void> {
+        if (!this.db) return;
+        await this.db.run(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_api_keys_agentid_unique ON api_keys(agentid COLLATE NOCASE)"
+        );
     }
 
     // ── Dashboard login ───────────────────────────────────────────────────────
@@ -275,8 +314,19 @@ export class AuthService {
 
     // ── API key management ────────────────────────────────────────────────────
 
-    async createApiKey(name: string, modelName: string | undefined, userId: string): Promise<{ id: string; key: string; prefix: string }> {
+    async createApiKey(name: string, agentId: string, userId: string): Promise<{ id: string; key: string; prefix: string }> {
         if (!this.db) throw new Error("AuthService not initialized.");
+
+        const normalizedName = name.trim();
+        const normalizedAgentId = agentId.trim();
+        if (!normalizedName) throw new Error("Name required");
+        if (!normalizedAgentId) throw new Error("Agent ID required");
+
+        const existing = await this.db.get<{ id: string }>(
+            "SELECT id FROM api_keys WHERE lower(agentid) = lower(?) LIMIT 1",
+            normalizedAgentId
+        );
+        if (existing) throw new Error("Agent ID already exists");
 
         const rawKey = `nn_${randomBytes(24).toString("base64url")}`;
         const prefix = rawKey.substring(0, 10);
@@ -284,8 +334,8 @@ export class AuthService {
         const id = uuidv4();
 
         await this.db.run(
-            "INSERT INTO api_keys (id, user_id, name, model_name, key_hash, key_prefix, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            id, userId, name, modelName || "", keyHash, prefix, new Date().toISOString()
+            "INSERT INTO api_keys (id, user_id, name, agentid, model_name, key_hash, key_prefix, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            id, userId, normalizedName, normalizedAgentId, normalizedAgentId, keyHash, prefix, new Date().toISOString()
         );
 
         return { id, key: rawKey, prefix };
@@ -294,7 +344,7 @@ export class AuthService {
     async listApiKeys(): Promise<ApiKeyRecord[]> {
         if (!this.db) return [];
         return await this.db.all(
-            "SELECT id, user_id, name, model_name, key_prefix, created_at, last_used_at, recalls_total, stores_total, revoked FROM api_keys ORDER BY created_at DESC"
+            "SELECT id, user_id, name, agentid, agentid AS model_name, key_prefix, created_at, last_used_at, recalls_total, stores_total, revoked FROM api_keys ORDER BY created_at DESC"
         );
     }
 

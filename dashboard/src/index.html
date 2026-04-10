@@ -81,6 +81,9 @@
       <button type="button" class="addBtn" data-tip="Add User" onclick="openAddUserModal()">
         <img src="/icons/AddUser.svg" width="24" height="24" alt="Add User">
       </button>
+      <button type="button" class="addBtn logoutBtn" id="logoutBtn" data-tip="Log Out" onclick="logoutDashboard()">
+        <img src="/icons/Logout.svg" width="24" height="24" alt="Log Out">
+      </button>
     </div>
   </header>
 
@@ -342,6 +345,9 @@
           </div>
           <div class="formActions configRestartNoteWrap">
             <div class="configRestartText">Restart Required</div>
+          </div>
+          <div class="formActions" style="margin-top:12px;">
+            <button class="btn btn-sm" onclick="resetRememberedLogin()">RESET SAVED LOGIN</button>
           </div>
         </div>
 
@@ -723,16 +729,20 @@ npm install</pre>
   font-size:12px; font-weight:600; letter-spacing:0.04em;
   opacity:0; transition:opacity 0.2s; pointer-events:none; z-index:9999;">✓ Success</div>
 
-<script src="./scripts/dashboard.js"></script>
 <!-- ══ LOGIN OVERLAY ══ -->
 <div id="loginOverlay">
   <div class="loginBox">
     <div class="loginTitle">NEURAL NEXUS</div>
     <div class="formGroup"><label>Username</label><input id="login-user" type="text" value="admin" autocomplete="username"></div>
     <div class="formGroup"><label>Password</label><input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <label class="checkboxRow" style="margin:6px 0 10px 0;">
+      <input id="login-remember" type="checkbox">
+      <span>Keep me logged in</span>
+    </label>
     <div id="login-error"></div>
     <button class="btn btn-primary btn-full" onclick="doLogin()">CONNECT</button>
   </div>
 </div>
+<script src="./scripts/dashboard.js"></script>
 </body>
 </html>

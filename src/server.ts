@@ -255,9 +255,8 @@ server.addHook("preHandler", async (request, reply) => {
             (request as any).auth = {
                 userId: keyRecord.user_id || `apikey:${keyRecord.id}`,
                 tokenId: keyRecord.id,
-                agentId: keyRecord.name,
+                agentId: keyRecord.agentid,
                 apiKeyId: keyRecord.id,
-                apiKeyModelName: keyRecord.model_name,
                 scopes: ["memory:read", "memory:write", "memory:update", "memory:delete"],
                 adapterId: "fastify-api-key"
             };
@@ -369,9 +368,14 @@ server.post("/admin/api-keys", async (request, reply) => {
     const context = (request as any).auth;
     const { name, model_name } = request.body as { name: string; model_name?: string };
     if (!name) return reply.status(400).send({ error: "Name required" });
+    if (!model_name?.trim()) return reply.status(400).send({ error: "Model name required" });
     const authService = core.getAuthService();
-    const result = await authService.createApiKey(name, model_name, context.userId);
-    return reply.status(201).send(result);
+    try {
+        const result = await authService.createApiKey(name, model_name, context.userId);
+        return reply.status(201).send(result);
+    } catch (err) {
+        return reply.status(400).send({ error: err instanceof Error ? err.message : String(err) });
+    }
 });
 
 server.delete("/admin/api-keys/:id", async (request, reply) => {
@@ -521,7 +525,6 @@ server.get("/memories", async (request, reply) => {
             strength: p.payload?.strength,
             score: null,
             agentid: p.payload?.agentid,
-            stored_by_model: p.payload?.stored_by_model,
             stored_by_key_id: p.payload?.stored_by_key_id,
             userid: p.payload?.userid,
         }))

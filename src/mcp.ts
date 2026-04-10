@@ -150,9 +150,8 @@ export function createMcpServer(core: NeuralNexusCore) {
                         // that used the key is tracked separately on `agentId`.
                         userId: apiKey.user_id || args.userid || "anonymous",
                         tokenId: apiKey.id,
-                        agentId: apiKey.name,
+                        agentId: apiKey.agentid,
                         apiKeyId: apiKey.id,
-                        apiKeyModelName: apiKey.model_name,
                         scopes: ["memory:read", "memory:write", "memory:update"],
                         adapterId: "mcp"
                     };

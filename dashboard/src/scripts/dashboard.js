@@ -3,7 +3,15 @@
 // ══════════════════════════════════════════════
 const BASE = 'http://localhost:8008';
 const CAT_COLORS = { fact:'#6dbe4c', preference:'#0ea5e9', entity:'#f59e0b', decision:'#a78bfa', other:'#808080' };
-let JWT = sessionStorage.getItem('nn_jwt') || '';
+const STORED_JWT = localStorage.getItem('nn_jwt') || sessionStorage.getItem('nn_jwt') || '';
+let JWT = STORED_JWT;
+
+function updateLogoutButtonState() {
+  const btn = document.getElementById('logoutBtn');
+  if (!btn) return;
+  btn.classList.toggle('logged-in', !!JWT);
+  btn.classList.toggle('logged-out', !JWT);
+}
 
 async function api(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -21,13 +29,16 @@ async function api(path, opts = {}) {
 
 function showLoginOverlay() {
   JWT = '';
+  localStorage.removeItem('nn_jwt');
   sessionStorage.removeItem('nn_jwt');
   document.getElementById('loginOverlay').style.display = 'flex';
+  updateLogoutButtonState();
 }
 
 async function doLogin() {
   const username = document.getElementById('login-user').value.trim();
   const password = document.getElementById('login-pass').value.trim();
+  const remember = !!document.getElementById('login-remember')?.checked;
   document.getElementById('login-error').textContent = '';
   try {
     const res = await fetch(BASE + '/auth/login', {
@@ -38,8 +49,15 @@ async function doLogin() {
     const data = await res.json().catch(() => ({}));
     if (data.token) {
       JWT = data.token;
-      sessionStorage.setItem('nn_jwt', JWT);
+      if (remember) {
+        localStorage.setItem('nn_jwt', JWT);
+        sessionStorage.removeItem('nn_jwt');
+      } else {
+        sessionStorage.setItem('nn_jwt', JWT);
+        localStorage.removeItem('nn_jwt');
+      }
       document.getElementById('loginOverlay').style.display = 'none';
+      updateLogoutButtonState();
       init();
     } else {
       document.getElementById('login-error').textContent = data.error || 'Login failed.';
@@ -49,9 +67,24 @@ async function doLogin() {
   }
 }
 
+function resetRememberedLogin() {
+  localStorage.removeItem('nn_jwt');
+  if (JWT) sessionStorage.setItem('nn_jwt', JWT);
+  const remember = document.getElementById('login-remember');
+  if (remember) remember.checked = false;
+  showSuccess('Saved login cleared.');
+}
+
+function logoutDashboard() {
+  showLoginOverlay();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const lp = document.getElementById('login-pass');
   if (lp) lp.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  const remember = document.getElementById('login-remember');
+  if (remember) remember.checked = !!localStorage.getItem('nn_jwt');
+  updateLogoutButtonState();
 });
 
 // ══════════════════════════════════════════════
@@ -357,7 +390,7 @@ async function renderRecentActivity() {
           <span class="catBadge ${m.category || 'other'}">${m.category || 'other'}</span>
         </div>
         <div class="actMeta">
-          <span>${m.stored_by_model || 'unknown'}</span>
+          <span>${m.agentid || 'unknown'}</span>
           <span>Str: ${m.strength != null ? parseFloat(m.strength).toFixed(2) : '—'}</span>
           <span>${fmtDate(m.created_at)}</span>
         </div>
@@ -406,8 +439,7 @@ async function renderMemories() {
       memories = memories.filter(m =>
         String(m.text || '').toLowerCase().includes(q) ||
         String(m.userid || '').toLowerCase().includes(q) ||
-        String(m.agentid || '').toLowerCase().includes(q) ||
-        String(m.stored_by_model || '').toLowerCase().includes(q)
+        String(m.agentid || '').toLowerCase().includes(q)
       );
     }
 
@@ -468,7 +500,6 @@ async function openMemModal(id) {
     <div class="modalRow"><div class="modalLabel">ID</div><div class="modalValue mono">${escHtml(m.id)}</div></div>
     <div class="modalRow"><div class="modalLabel">Owner User</div><div class="modalValue mono">${escHtml(m.userid || '—')}</div></div>
     <div class="modalRow"><div class="modalLabel">Agent ID</div><div class="modalValue mono">${escHtml(m.agentid || '—')}</div></div>
-    <div class="modalRow"><div class="modalLabel">Stored By Model</div><div class="modalValue mono">${escHtml(m.stored_by_model || '—')}</div></div>
     <div class="modalRow"><div class="modalLabel">Stored By Key</div><div class="modalValue mono">${escHtml(m.stored_by_key_id || '—')}</div></div>
   `;
   document.getElementById('memModal').classList.add('show');
@@ -548,8 +579,9 @@ async function generateKey() {
   const name  = document.getElementById('ak-name').value.trim();
   const model = document.getElementById('ak-model').value.trim();
   if (!name) { showWarning('Key name is required.'); return; }
+  if (!model) { showWarning('Model name is required.'); return; }
   try {
-    const body = model ? { name, model_name: model } : { name };
+    const body = { name, model_name: model };
     const result = await api('/admin/api-keys', { method: 'POST', body });
     if (!result) return;
     await loadApiKeys();
@@ -846,8 +878,9 @@ async function quickAddKey() {
   const name  = document.getElementById('qa-keyname').value.trim();
   const model = document.getElementById('qa-model').value.trim();
   if (!name) { showWarning('Key name is required.'); return; }
+  if (!model) { showWarning('Model name is required.'); return; }
   try {
-    const body = model ? { name, model_name: model } : { name };
+    const body = { name, model_name: model };
     const result = await api('/admin/api-keys', { method: 'POST', body });
     if (!result) return;
     document.getElementById('qa-keyname').value = '';

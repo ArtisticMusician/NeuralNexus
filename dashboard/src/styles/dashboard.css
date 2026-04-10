@@ -232,6 +232,36 @@ html, body { height: 100%; background: #131313; font-family: 'Inter', system-ui,
 }
 .addBtn:hover { background: rgba(14,165,233,0.14); }
 .addBtn img, .addBtn svg { width: 24px; height: 24px; pointer-events: none; filter: brightness(0) invert(1); }
+.logoutBtn {
+  border-color: rgba(109,190,76,0.75);
+}
+.logoutBtn img {
+  filter: brightness(0) saturate(100%) invert(62%) sepia(30%) saturate(780%) hue-rotate(52deg) brightness(96%) contrast(92%);
+}
+.logoutBtn.logged-in {
+  box-shadow:
+    0 0 0 1px rgba(109,190,76,0.22),
+    0 0 12px rgba(109,190,76,0.38),
+    0 0 24px rgba(109,190,76,0.22),
+    inset 0 0 12px rgba(109,190,76,0.10);
+}
+.logoutBtn.logged-in:hover {
+  background: rgba(109,190,76,0.12);
+  box-shadow:
+    0 0 0 1px rgba(109,190,76,0.28),
+    0 0 16px rgba(109,190,76,0.46),
+    0 0 30px rgba(109,190,76,0.28),
+    inset 0 0 14px rgba(109,190,76,0.12);
+}
+.logoutBtn.logged-out {
+  border-color: var(--border);
+}
+.logoutBtn.logged-out img {
+  filter: brightness(0) saturate(100%) invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(88%);
+}
+.logoutBtn.logged-out:hover {
+  background: rgba(255,255,255,0.04);
+}
 .addBtn::after {
   content: attr(data-tip);
   position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);

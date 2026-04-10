@@ -19,7 +19,6 @@ export interface AuthContext {
   // This is provenance only and must never be used as the tenant boundary.
   agentId?: string;
   apiKeyId?: string;
-  apiKeyModelName?: string | null;
   adapterId?: string; // e.g., 'mcp', 'openai-proxy', 'fastify'
 }
 

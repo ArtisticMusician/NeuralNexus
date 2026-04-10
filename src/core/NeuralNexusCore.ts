@@ -266,7 +266,6 @@ export class NeuralNexusCore {
                 userid: userid,
                 agentid: context.agentId ?? null,
                 stored_by_key_id: context.apiKeyId ?? null,
-                stored_by_model: context.apiKeyModelName ?? null,
                 metadata: request.metadata
             };
 
@@ -573,7 +572,6 @@ export class NeuralNexusCore {
             userid: userid,
             agentid: bestMatch.payload.agentid ?? null,
             stored_by_key_id: bestMatch.payload.stored_by_key_id ?? null,
-            stored_by_model: bestMatch.payload.stored_by_model ?? null,
             metadata: request.metadata || {}
         };
 
