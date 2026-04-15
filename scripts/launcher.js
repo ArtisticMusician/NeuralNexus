@@ -4,6 +4,7 @@
  * If already running, restarts the dev server fresh.
  */
 import http from 'http';
+import net from 'net';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -16,6 +17,25 @@ const npmCmd = isWin ? 'npm.cmd' : 'npm';
 
 function log(msg) {
   console.log(`[nexus] ${msg}`);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function isPortOpen(port, host = '127.0.0.1') {
+  return new Promise(resolve => {
+    const socket = net.createConnection({ port, host });
+    socket.once('connect', () => {
+      socket.destroy();
+      resolve(true);
+    });
+    socket.once('error', () => resolve(false));
+    socket.setTimeout(1500, () => {
+      socket.destroy();
+      resolve(false);
+    });
+  });
 }
 
 function checkQdrant() {
@@ -33,13 +53,24 @@ function checkQdrant() {
   });
 }
 
-function waitForQdrant(maxMs = 30_000) {
+function waitForQdrant(maxMs = 90_000) {
   return new Promise((resolve, reject) => {
     const deadline = Date.now() + maxMs;
     (async function poll() {
       if (await checkQdrant()) return resolve();
-      if (Date.now() >= deadline) return reject(new Error('Qdrant did not start within 30s'));
+      if (Date.now() >= deadline) return reject(new Error('Qdrant did not start within 90s'));
       setTimeout(poll, 1500);
+    })();
+  });
+}
+
+function waitForPortToClose(port, maxMs = 15_000) {
+  return new Promise((resolve, reject) => {
+    const deadline = Date.now() + maxMs;
+    (async function poll() {
+      if (!(await isPortOpen(port))) return resolve();
+      if (Date.now() >= deadline) return reject(new Error(`Port ${port} did not close after stopping Qdrant`));
+      setTimeout(poll, 500);
     })();
   });
 }
@@ -93,7 +124,14 @@ async function main() {
 
   log('Rebooting Qdrant...');
   await killQdrant();
-  await new Promise(r => setTimeout(r, 1000));
+  await waitForPortToClose(5304).catch(async () => {
+    log('Port 5304 still busy after stop request; waiting a bit longer...');
+    await sleep(3000);
+    if (await isPortOpen(5304)) {
+      throw new Error('Port 5304 is still in use after attempting to stop Qdrant');
+    }
+  });
+  await sleep(1000);
   startQdrant();
   log('Waiting for Qdrant...');
   await waitForQdrant();
