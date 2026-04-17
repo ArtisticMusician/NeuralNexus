@@ -17,3 +17,6 @@ bin_qdrant/
 *.tar.gz
 
 tools/
+
+reference/
+plans/
